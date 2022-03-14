@@ -43,7 +43,7 @@ describe("Create User Controller", () => {
         password: "admin",
       });
 
-      expect(response.status).toEqual(400);
+      expect(response.status).toBe(400);
       expect(response.body.message).toEqual("User already exists");
   });
 });
