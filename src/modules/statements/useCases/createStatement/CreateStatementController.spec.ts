@@ -47,6 +47,35 @@ describe("Create a statement", () => {
         expect(balance.body).toHaveProperty("created_at");
         expect(balance.body).toHaveProperty("updated_at");
     });
+	
+	it("should create a withdraw statement", async () => {
+        const tokenUser = await request(app).post("/api/v1/sessions").send({
+            email: user.email,
+            password: user.password,
+        }).set({
+            Accept: "application/json",
+            ContentType: "application/json",
+        });
+
+        await request(app).post("/api/v1/statements/deposit").send({
+            amount: 12,
+            description: "Test"
+        }).set({
+            Authorization: `Bearer ${tokenUser.body.token}`
+        });
+
+        const balance = await request(app).post("/api/v1/statements/withdraw").send({
+            amount: 12,
+            description: "Test"
+        }).set({
+            Authorization: `Bearer ${tokenUser.body.token}`
+        });
+
+        expect(balance.status).toBe(201);
+        expect(balance.body).toHaveProperty("id");
+        expect(balance.body).toHaveProperty("created_at");
+        expect(balance.body).toHaveProperty("updated_at");
+    });
 
     it("should not able to create a statement with insufficient funds", async () => {
         const tokenUser = await request(app).post("/api/v1/sessions").send({
